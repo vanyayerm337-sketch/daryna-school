@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Daryna English School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  /* ===== DESIGN TOKENS ===== */
+  :root {
+    --c-bg: #FAFAF8;
+    --c-surface: #FFFFFF;
+    --c-border: rgba(0,0,0,0.08);
+    --c-border-md: rgba(0,0,0,0.14);
+    --c-text: #1A1A18;
+    --c-text-2: #5A5A54;
+    --c-text-3: #9A9A90;
+    --c-accent: #2D5BE3;
+    --c-accent-light: #EEF2FF;
+    --c-accent-dark: #1A3DB5;
+    --c-green: #16A370;
+    --c-green-light: #EDFAF4;
+    --c-amber: #D97706;
+    --c-amber-light: #FEF3C7;
+    --c-red: #DC2626;
+    --c-red-light: #FEE2E2;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    --shadow-lg: 0 20px 48px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.06);
+    --sidebar-w: 240px;
+    --header-h: 60px;
+    --font-sans: 'DM Sans', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ===== RESET ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--c-bg);
+    color: var(--c-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input, textarea, select { font-family: inherit; font-size: 14px; }
+  a { text-decoration: none; color: inherit; }
+  img { max-width: 100%; display: block; }
+  ul { list-style: none; }
+
+  /* ===== AUTH SCREENS ===== */
+  #auth-overlay {
+    position: fixed; inset: 0;
+    background: var(--c-bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    opacity: 1; transition: opacity 0.4s;
+  }
+  #auth-overlay.hidden { opacity: 0; pointer-events: none; }
+
+  .auth-card {
+    width: 420px; max-width: calc(100vw - 32px);
+    background: var(--c-surface);
+    border: 0.5px solid var(--c-border-md);
+    border-radius: var(--radius-xl);
+    padding: 48px 40px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes slideUp {
+    from { opacity:0; transform: translateY(24px) scale(0.97); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  .auth-logo {
+    font-family: var(--font-serif);
+    font-size: 28px; color: var(--c-text);
+    margin-bottom: 8px;
+  }
+  .auth-logo span { color: var(--c-accent); }
+  .auth-sub { font-size: 14px; color: var(--c-text-3); margin-bottom: 36px; }
+
+  .auth-tabs { display: flex; gap: 4px; margin-bottom: 28px; background: var(--c-bg); border-radius: var(--radius-md); padding: 4px; }
+  .auth-tab {
+    flex: 1; padding: 8px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; color: var(--c-text-3);
+    transition: var(--transition); text-align: center; cursor: pointer;
+  }
+  .auth-tab.active { background: var(--c-surface); color: var(--c-text); box-shadow: var(--shadow-sm); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--c-text-2); margin-bottom: 6px; letter-spacing: 0.02em; text-transform: uppercase; }
+  .form-input {
+    width: 100%; padding: 10px 14px;
+    border: 0.5px solid var(--c-border-md);
+    border-radius: var(--radius-sm);
+    background: var(--c-surface);
+    color: var(--c-text); font-size: 14px;
+    transition: var(--transition); outline: none;
+  }
+  .form-input:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(45,91,227,0.1); }
+
+  .btn-primary {
+    width: 100%; padding: 12px;
+    background: var(--c-accent); color: #fff;
+    border-radius: var(--radius-sm); font-size: 14px; font-weight: 500;
+    transition: var(--transition); margin-top: 8px;
+  }
+  .btn-primary:hover { background: var(--c-accent-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .auth-hint { font-size: 12px; color: var(--c-text-3); text-align: center; margin-top: 20px; }
+  .auth-hint a { color: var(--c-accent); }
+
+  /* ===== APP LAYOUT ===== */
+  #app { display: none; min-height: 100vh; }
+  #app.visible { display: flex; flex-direction: column; }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    height: var(--header-h);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--c-border);
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 16px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-logo { font-family: var(--font-serif); font-size: 20px; color: var(--c-text); }
+  .topbar-logo span { color: var(--c-accent); }
+  .topbar-spacer { flex: 1; }
+  .topbar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 12px; border-radius: var(--radius-md);
+    background: var(--c-bg); border: 0.5px solid var(--c-border);
+    cursor: pointer; transition: var(--transition);
+  }
+  .topbar-user:hover { background: var(--c-accent-light); border-color: var(--c-accent); }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--c-accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+  }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-role { font-size: 11px; color: var(--c-text-3); }
+
+  .topbar-btn {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--c-bg); border: 0.5px solid var(--c-border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition); font-size: 16px;
+  }
+  .topbar-btn:hover { background: var(--c-accent-light); border-color: var(--c-accent); }
+
+  /* ===== MAIN BODY ===== */
+  .app-body { display: flex; flex: 1; min-height: calc(100vh - var(--header-h)); }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: var(--c-surface);
+    border-right: 0.5px solid var(--c-border);
+    padding: 20px 12px;
+    position: sticky; top: var(--header-h);
+    height: calc(100vh - var(--header-h));
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 600; color: var(--c-text-3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 12px 8px 4px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: var(--transition);
+    color: var(--c-text-2); font-size: 13px; font-weight: 500;
+  }
+  .nav-item:hover { background: var(--c-bg); color: var(--c-text); }
+  .nav-item.active { background: var(--c-accent-light); color: var(--c-accent); }
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--c-accent); color: #fff;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 6px; border-radius: 20px;
+  }
+  .sidebar-spacer { flex: 1; }
+
+  /* ===== CONTENT AREA ===== */
+  .content { flex: 1; padding: 32px; overflow: auto; max-width: 1200px; }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 32px; gap: 16px; flex-wrap: wrap;
+  }
+  .page-title { font-family: var(--font-serif); font-size: 32px; line-height: 1.2; }
+  .page-subtitle { font-size: 14px; color: var(--c-text-3); margin-top: 4px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500;
+    transition: var(--transition); cursor: pointer; border: none;
+  }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-accent { background: var(--c-accent); color: #fff; }
+  .btn-accent:hover { background: var(--c-accent-dark); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--c-text-2);
+    border: 0.5px solid var(--c-border-md);
+  }
+  .btn-outline:hover { background: var(--c-bg); color: var(--c-text); }
+  .btn-danger { background: var(--c-red); color: #fff; }
+  .btn-danger:hover { opacity: 0.9; }
+  .btn-ghost { background: transparent; color: var(--c-text-3); }
+  .btn-ghost:hover { color: var(--c-text); background: var(--c-bg); }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--c-surface);
+    border: 0.5px solid var(--c-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-sm { padding: 16px; border-radius: var(--radius-md); }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .card-title { font-size: 15px; font-weight: 600; }
+  .card-subtitle { font-size: 13px; color: var(--c-text-3); margin-top: 2px; }
+
+  /* ===== STAT CARDS ===== */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat-card {
+    background: var(--c-surface); border: 0.5px solid var(--c-border);
+    border-radius: var(--radius-lg); padding: 20px;
+    box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+  }
+  .stat-value { font-size: 28px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: var(--c-text-3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-accent { position: absolute; top: 0; right: 0; width: 60px; height: 60px; border-radius: 0 0 0 60px; opacity: 0.08; }
+
+  /* ===== TABLES ===== */
+  .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 0.5px solid var(--c-border); }
+  table { width: 100%; border-collapse: collapse; background: var(--c-surface); font-size: 13px; }
+  thead { background: var(--c-bg); }
+  th { padding: 10px 16px; text-align: left; font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-text-3); border-bottom: 0.5px solid var(--c-border); }
+  td { padding: 12px 16px; border-bottom: 0.5px solid var(--c-border); color: var(--c-text-2); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr { transition: var(--transition); }
+  tbody tr:hover { background: var(--c-bg); }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-green { background: var(--c-green-light); color: var(--c-green); }
+  .badge-amber { background: var(--c-amber-light); color: var(--c-amber); }
+  .badge-red { background: var(--c-red-light); color: var(--c-red); }
+  .badge-blue { background: var(--c-accent-light); color: var(--c-accent); }
+  .badge-gray { background: var(--c-bg); color: var(--c-text-3); border: 0.5px solid var(--c-border); }
+
+  /* ===== GRID LAYOUTS ===== */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+  /* ===== MODALS ===== */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 500; padding: 20px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--c-surface);
+    border-radius: var(--radius-xl);
+    padding: 32px; width: 520px; max-width: 100%;
+    max-height: 80vh; overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95) translateY(12px);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+  .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px; }
+
+  /* ===== TOAST ===== */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    background: var(--c-text); color: #fff;
+    padding: 12px 18px; border-radius: var(--radius-md);
+    font-size: 13px; box-shadow: var(--shadow-lg);
+    animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    display: flex; align-items: center; gap: 8px;
+  }
+  @keyframes toastIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+  .toast.success { background: var(--c-green); }
+  .toast.error { background: var(--c-red); }
+
+  /* ===== AVATAR ===== */
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--c-accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .avatar-lg { width: 52px; height: 52px; font-size: 16px; }
+
+  /* ===== CONTENT CARDS (lessons/books/videos) ===== */
+  .content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .content-card {
+    background: var(--c-surface); border: 0.5px solid var(--c-border);
+    border-radius: var(--radius-lg); overflow: hidden;
+    transition: var(--transition); cursor: pointer;
+  }
+  .content-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--c-border-md); }
+  .content-card-thumb {
+    height: 120px; background: var(--c-accent-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; position: relative;
+  }
+  .content-card-body { padding: 16px; }
+  .content-card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .content-card-meta { font-size: 12px; color: var(--c-text-3); }
+  .content-card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+
+  /* ===== CALENDAR ===== */
+  .calendar-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px; margin-top: 12px;
+  }
+  .cal-day-label { text-align: center; font-size: 11px; font-weight: 600; color: var(--c-text-3); padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-sm); font-size: 13px; cursor: pointer;
+    transition: var(--transition); position: relative;
+  }
+  .cal-day:hover { background: var(--c-accent-light); color: var(--c-accent); }
+  .cal-day.today { background: var(--c-accent); color: #fff; font-weight: 600; }
+  .cal-day.has-lesson::after {
+    content: ''; position: absolute; bottom: 3px;
+    width: 4px; height: 4px; border-radius: 50%; background: var(--c-green);
+  }
+  .cal-day.today.has-lesson::after { background: rgba(255,255,255,0.8); }
+  .cal-day.missed::after { background: var(--c-red); }
+  .cal-day.empty { cursor: default; }
+
+  /* ===== WHITEBOARD ===== */
+  .whiteboard-wrap { border: 0.5px solid var(--c-border); border-radius: var(--radius-lg); overflow: hidden; }
+  #whiteboard { display: block; cursor: crosshair; background: #fff; }
+  .wb-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; background: var(--c-surface);
+    border-bottom: 0.5px solid var(--c-border); flex-wrap: wrap;
+  }
+  .wb-color { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: var(--transition); }
+  .wb-color.active { border-color: var(--c-text); }
+  .wb-tool-btn {
+    padding: 5px 10px; border-radius: var(--radius-sm);
+    font-size: 12px; font-weight: 500; color: var(--c-text-2);
+    border: 0.5px solid var(--c-border); background: var(--c-bg);
+    cursor: pointer; transition: var(--transition);
+  }
+  .wb-tool-btn.active { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
+
+  /* ===== HOMEWORK EDITOR ===== */
+  .hw-editor {
+    min-height: 120px; padding: 14px; width: 100%;
+    border: 0.5px solid var(--c-border-md); border-radius: var(--radius-md);
+    background: var(--c-surface); color: var(--c-text);
+    font-size: 14px; line-height: 1.7; resize: vertical; outline: none;
+    transition: var(--transition);
+  }
+  .hw-editor:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(45,91,227,0.08); }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar { height: 4px; background: var(--c-border); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--c-accent); border-radius: 4px; transition: width 0.5s; }
+
+  /* ===== TABS ===== */
+  .tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--c-border); margin-bottom: 24px; }
+  .tab-btn {
+    padding: 10px 18px; font-size: 13px; font-weight: 500;
+    color: var(--c-text-3); border-bottom: 2px solid transparent;
+    cursor: pointer; transition: var(--transition);
+  }
+  .tab-btn.active { color: var(--c-accent); border-bottom-color: var(--c-accent); }
+  .tab-btn:hover:not(.active) { color: var(--c-text-2); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ===== SEARCH BAR ===== */
+  .search-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--c-surface); border: 0.5px solid var(--c-border);
+    border-radius: var(--radius-md); padding: 8px 14px;
+    transition: var(--transition);
+  }
+  .search-bar:focus-within { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(45,91,227,0.08); }
+  .search-bar input { flex: 1; border: none; outline: none; background: none; font-size: 13px; }
+  .search-icon { color: var(--c-text-3); font-size: 14px; }
+
+  /* ===== PAYMENT CARD ===== */
+  .payment-card {
+    background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-dark) 100%);
+    border-radius: var(--radius-lg); padding: 24px; color: #fff;
+    position: relative; overflow: hidden;
+  }
+  .payment-card::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .payment-amount { font-size: 36px; font-weight: 600; }
+  .payment-label { font-size: 13px; opacity: 0.75; margin-bottom: 4px; }
+
+  /* ===== LINK CARD ===== */
+  .link-card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--c-surface); border: 0.5px solid var(--c-border);
+    border-radius: var(--radius-md); padding: 14px 18px;
+    transition: var(--transition); cursor: pointer;
+  }
+  .link-card:hover { border-color: var(--c-accent); background: var(--c-accent-light); transform: translateX(4px); }
+  .link-icon { font-size: 22px; width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--c-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* ===== MOBILE ===== */
+  .menu-toggle { display: none; }
+  .sidebar-overlay { display: none; }
+
+  @media (max-width: 768px) {
+    .content { padding: 20px 16px; }
+    .menu-toggle { display: flex; }
+    .sidebar {
+      position: fixed; left: -100%; top: var(--header-h); z-index: 200;
+      height: calc(100vh - var(--header-h)); width: 260px;
+      transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: var(--shadow-lg);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-overlay {
+      display: block; position: fixed; inset: 0; top: var(--header-h);
+      background: rgba(0,0,0,0.3); z-index: 199;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+    .page-title { font-size: 24px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ===== SECTION FADE IN ===== */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ===== MISC ===== */
+  .divider { height: 0.5px; background: var(--c-border); margin: 20px 0; }
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--c-text-3); }
+  .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+  .flex { display: flex; }
+  .flex-center { display: flex; align-items: center; }
+  .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 12px; }
+  .text-muted { color: var(--c-text-3); }
+  .font-500 { font-weight: 500; }
+  .font-600 { font-weight: 600; }
+  .full-w { width: 100%; }
+  .select-input {
+    width: 100%; padding: 10px 14px;
+    border: 0.5px solid var(--c-border-md); border-radius: var(--radius-sm);
+    background: var(--c-surface); color: var(--c-text); font-size: 14px;
+    outline: none; appearance: none; cursor: pointer;
+    transition: var(--transition);
+  }
+  .select-input:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px rgba(45,91,227,0.1); }
+</style>
+</head>
+<body>
+
+<!-- ===== AUTH OVERLAY ===== -->
+<div id="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-logo">Daryna<span>.</span>School</div>
+    <p class="auth-sub">Платформа для вивчення англійської мови</p>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login')">Увійти</div>
+      <div class="auth-tab" onclick="switchAuthTab('register')">Реєстрація</div>
+    </div>
+
+    <div id="login-form">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="your@email.com" value="admin@school.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="••••••••" value="admin123" />
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Увійти →</button>
+      <p class="auth-hint">
+        Demo: <strong>admin@school.com</strong> / admin123<br>
+        або <strong>student@school.com</strong> / student123
+      </p>
+    </div>
+
+    <div id="register-form" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Ім'я</label>
+        <input class="form-input" type="text" id="reg-name" placeholder="Ваше ім'я" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="reg-email" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input class="form-input" type="password" id="reg-pass" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Зареєструватись →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="topbar-btn menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="topbar-logo">Daryna<span>.</span>School</div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-btn" onclick="showToast('Сповіщень немає','')">🔔</div>
+    <div class="topbar-user" onclick="showUserMenu()">
+      <div class="user-avatar" id="top-avatar">D</div>
+      <div>
+        <div class="user-name" id="top-name">Дарина</div>
+        <div class="user-role" id="top-role">Адміністратор</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">Вийти</button>
+  </header>
+
+  <div class="app-body">
+    <!-- SIDEBAR OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-section-label">Навігація</div>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('students')">
+        <span class="nav-icon">👨‍🎓</span> Учні
+        <span class="nav-badge" id="students-count">5</span>
+      </div>
+      <div class="nav-item" onclick="navigate('lessons')">
+        <span class="nav-icon">📚</span> Уроки
+      </div>
+      <div class="nav-item" onclick="navigate('calendar')">
+        <span class="nav-icon">📅</span> Розклад
+      </div>
+      <div class="nav-item" onclick="navigate('homework')">
+        <span class="nav-icon">📝</span> Домашні завдання
+        <span class="nav-badge" id="hw-badge" style="display:none">!</span>
+      </div>
+
+      <div class="sidebar-section-label">Матеріали</div>
+      <div class="nav-item" onclick="navigate('library')">
+        <span class="nav-icon">📖</span> Бібліотека
+      </div>
+      <div class="nav-item" onclick="navigate('videos')">
+        <span class="nav-icon">🎬</span> Відео
+      </div>
+      <div class="nav-item" onclick="navigate('online')">
+        <span class="nav-icon">🎥</span> Онлайн заняття
+      </div>
+      <div class="nav-item" onclick="navigate('whiteboard')">
+        <span class="nav-icon">✏️</span> Дошка
+      </div>
+
+      <div class="sidebar-section-label">Фінанси</div>
+      <div class="nav-item" onclick="navigate('payments')">
+        <span class="nav-icon">💳</span> Оплата
+      </div>
+
+      <div class="sidebar-spacer"></div>
+      <div class="nav-item" onclick="navigate('settings')" style="margin-top:8px;">
+        <span class="nav-icon">⚙️</span> Налаштування
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Привіт, <span id="greeting-name">Дарино</span> 👋</h1>
+            <p class="page-subtitle" id="greeting-date">Сьогодні, понеділок</p>
+          </div>
+          <button class="btn btn-accent" onclick="navigate('online')">+ Заняття зараз</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Активні учні</div>
+            <div class="stat-value" style="color:var(--c-accent)">5</div>
+            <div class="stat-accent" style="background:var(--c-accent)"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Уроків цього місяця</div>
+            <div class="stat-value" style="color:var(--c-green)">23</div>
+            <div class="stat-accent" style="background:var(--c-green)"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Дохід (грн)</div>
+            <div class="stat-value" style="color:var(--c-amber)">9 200</div>
+            <div class="stat-accent" style="background:var(--c-amber)"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Завдань на перевірку</div>
+            <div class="stat-value" style="color:var(--c-red)">3</div>
+            <div class="stat-accent" style="background:var(--c-red)"></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Upcoming lessons today -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Сьогоднішні заняття</div>
+                <div class="card-subtitle">Розклад на сьогодні</div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="navigate('calendar')">Всі →</button>
+            </div>
+            <div id="today-lessons"></div>
+          </div>
+
+          <!-- Recent homework -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Нові завдання</div>
+                <div class="card-subtitle">Чекають на перевірку</div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="navigate('homework')">Всі →</button>
+            </div>
+            <div id="recent-hw"></div>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="mt-24">
+          <div class="card-title mb-16">Швидкий доступ</div>
+          <div class="grid-3">
+            <div class="link-card" onclick="navigate('online')">
+              <div class="link-icon">📹</div>
+              <div>
+                <div class="font-500 text-sm">Запустити Zoom</div>
+                <div class="text-xs text-muted">Розпочати заняття</div>
+              </div>
+            </div>
+            <div class="link-card" onclick="navigate('whiteboard')">
+              <div class="link-icon">✏️</div>
+              <div>
+                <div class="font-500 text-sm">Відкрити дошку</div>
+                <div class="text-xs text-muted">Інтерактивна дошка</div>
+              </div>
+            </div>
+            <div class="link-card" onclick="navigate('homework')">
+              <div class="link-icon">📝</div>
+              <div>
+                <div class="font-500 text-sm">Додати завдання</div>
+                <div class="text-xs text-muted">Нове ДЗ для учня</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENTS ===== -->
+      <div class="page" id="page-students">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Учні</h1>
+            <p class="page-subtitle">Управління учнями та їх прогресом</p>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-outline" onclick="openModal('invite-modal')">✉️ Запросити</button>
+            <button class="btn btn-accent" onclick="openModal('add-student-modal')">+ Додати учня</button>
+          </div>
+        </div>
+
+        <div class="search-bar mb-24">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Пошук учнів..." oninput="filterStudents(this.value)" />
+        </div>
+
+        <div id="students-list"></div>
+      </div>
+
+      <!-- ===== LESSONS ===== -->
+      <div class="page" id="page-lessons">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Матеріали уроків</h1>
+            <p class="page-subtitle">Навчальні матеріали та ресурси</p>
+          </div>
+          <button class="btn btn-accent" id="add-lesson-btn" onclick="openModal('add-lesson-modal')">+ Додати матеріал</button>
+        </div>
+
+        <div class="tabs">
+          <div class="tab-btn active" onclick="switchTab(this,'tab-lessons','all-lessons')">Всі</div>
+          <div class="tab-btn" onclick="switchTab(this,'tab-lessons','books-lessons')">📖 Книги</div>
+          <div class="tab-btn" onclick="switchTab(this,'tab-lessons','files-lessons')">📎 Файли</div>
+        </div>
+
+        <div class="tab-panel active" id="tab-all-lessons">
+          <div class="content-grid" id="lessons-grid"></div>
+        </div>
+        <div class="tab-panel" id="tab-books-lessons">
+          <div class="content-grid" id="books-grid"></div>
+        </div>
+        <div class="tab-panel" id="tab-files-lessons">
+          <div class="content-grid" id="files-grid"></div>
+        </div>
+      </div>
+
+      <!-- ===== CALENDAR ===== -->
+      <div class="page" id="page-calendar">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Розклад занять</h1>
+            <p class="page-subtitle">Планування та відстеження відвідуваності</p>
+          </div>
+          <button class="btn btn-accent" onclick="openModal('add-schedule-modal')">+ Додати заняття</button>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" id="cal-month-title">Травень 2026</div>
+              <div class="flex gap-8">
+                <button class="btn btn-outline btn-sm" onclick="changeMonth(-1)">‹</button>
+                <button class="btn btn-outline btn-sm" onclick="changeMonth(1)">›</button>
+              </div>
+            </div>
+            <div class="calendar-grid" id="calendar-days-header"></div>
+            <div class="calendar-grid" id="calendar-days"></div>
+          </div>
+          <div class="card">
+            <div class="card-title mb-16">Деталі: <span id="cal-selected-date">виберіть день</span></div>
+            <div id="cal-day-details">
+              <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <p>Натисніть на день у календарі</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-24">
+          <div class="card-header">
+            <div class="card-title">Всі заняття</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Учень</th><th>Дата</th><th>Час</th><th>Статус</th><th>Дії</th></tr></thead>
+              <tbody id="schedule-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HOMEWORK ===== -->
+      <div class="page" id="page-homework">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Домашні завдання</h1>
+            <p class="page-subtitle">Завдання та оцінки</p>
+          </div>
+          <button class="btn btn-accent" id="create-hw-btn" onclick="openModal('create-hw-modal')">+ Нове завдання</button>
+        </div>
+
+        <div class="tabs">
+          <div class="tab-btn active" onclick="switchTab(this,'tab-hw','pending-hw')">⏳ На перевірці</div>
+          <div class="tab-btn" onclick="switchTab(this,'tab-hw','all-hw')">Всі завдання</div>
+          <div class="tab-btn" id="my-hw-tab" onclick="switchTab(this,'tab-hw','my-hw')">Мої завдання</div>
+        </div>
+
+        <div class="tab-panel active" id="tab-pending-hw">
+          <div id="pending-hw-list"></div>
+        </div>
+        <div class="tab-panel" id="tab-all-hw">
+          <div id="all-hw-list"></div>
+        </div>
+        <div class="tab-panel" id="tab-my-hw">
+          <div id="my-hw-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== LIBRARY ===== -->
+      <div class="page" id="page-library">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Бібліотека</h1>
+            <p class="page-subtitle">Книги, файли та навчальні матеріали</p>
+          </div>
+          <button class="btn btn-accent" onclick="openModal('add-resource-modal')">+ Додати ресурс</button>
+        </div>
+        <div class="content-grid" id="library-grid"></div>
+      </div>
+
+      <!-- ===== VIDEOS ===== -->
+      <div class="page" id="page-videos">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Відео матеріали</h1>
+            <p class="page-subtitle">YouTube, Vimeo та інші відеоматеріали</p>
+          </div>
+          <button class="btn btn-accent" onclick="openModal('add-video-modal')">+ Додати відео</button>
+        </div>
+        <div class="content-grid" id="videos-grid"></div>
+      </div>
+
+      <!-- ===== ONLINE LESSONS ===== -->
+      <div class="page" id="page-online">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Онлайн заняття</h1>
+            <p class="page-subtitle">Посилання для відеоконференцій</p>
+          </div>
+          <button class="btn btn-accent" onclick="openModal('add-link-modal')">+ Додати посилання</button>
+        </div>
+        <div class="grid-2" id="online-links-grid"></div>
+      </div>
+
+      <!-- ===== WHITEBOARD ===== -->
+      <div class="page" id="page-whiteboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Інтерактивна дошка</h1>
+            <p class="page-subtitle">Малюйте та пишіть разом</p>
+          </div>
+          <button class="btn btn-outline" onclick="clearWhiteboard()">🗑 Очистити</button>
+        </div>
+        <div class="whiteboard-wrap">
+          <div class="wb-toolbar">
+            <span class="text-xs text-muted font-500">Колір:</span>
+            <div class="wb-color active" style="background:#1A1A18" data-color="#1A1A18" onclick="setWbColor(this)"></div>
+            <div class="wb-color" style="background:#2D5BE3" data-color="#2D5BE3" onclick="setWbColor(this)"></div>
+            <div class="wb-color" style="background:#DC2626" data-color="#DC2626" onclick="setWbColor(this)"></div>
+            <div class="wb-color" style="background:#16A370" data-color="#16A370" onclick="setWbColor(this)"></div>
+            <div class="wb-color" style="background:#D97706" data-color="#D97706" onclick="setWbColor(this)"></div>
+            <div class="wb-color" style="background:#9333EA" data-color="#9333EA" onclick="setWbColor(this)"></div>
+            <span class="text-xs text-muted font-500" style="margin-left:8px">Розмір:</span>
+            <input type="range" min="1" max="20" value="3" id="wb-size" style="width:80px" oninput="wbSize=this.value" />
+            <span class="text-xs text-muted" id="wb-size-label">3px</span>
+            <div style="flex:1"></div>
+            <button class="wb-tool-btn active" id="btn-draw" onclick="setWbTool('draw',this)">✏️ Малювати</button>
+            <button class="wb-tool-btn" id="btn-erase" onclick="setWbTool('erase',this)">◻ Ластик</button>
+            <button class="wb-tool-btn" id="btn-text" onclick="setWbTool('text',this)">T Текст</button>
+          </div>
+          <canvas id="whiteboard" width="900" height="500"></canvas>
+        </div>
+        <div class="card mt-24">
+          <div class="card-title mb-16">Поле для письма</div>
+          <textarea class="hw-editor" placeholder="Пишіть тут нотатки, слова, речення..."></textarea>
+        </div>
+      </div>
+
+      <!-- ===== PAYMENTS ===== -->
+      <div class="page" id="page-payments">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Оплата</h1>
+            <p class="page-subtitle">Управління платежами та балансом</p>
+          </div>
+          <button class="btn btn-accent" onclick="openModal('add-payment-modal')">+ Записати платіж</button>
+        </div>
+
+        <div class="stats-grid mb-24">
+          <div class="payment-card">
+            <div class="payment-label">Дохід цього місяця</div>
+            <div class="payment-amount">9 200 ₴</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Уроків оплачено</div>
+            <div class="stat-value" style="color:var(--c-green)">23</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Очікується</div>
+            <div class="stat-value" style="color:var(--c-amber)">2 400 ₴</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Баланс учнів</div>
+          </div>
+          <div id="students-balance"></div>
+        </div>
+
+        <div class="card mt-24">
+          <div class="card-header">
+            <div class="card-title">Історія платежів</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Учень</th><th>Дата</th><th>Кількість уроків</th><th>Сума (₴)</th><th>Статус</th></tr></thead>
+              <tbody id="payments-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS ===== -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Налаштування</h1>
+            <p class="page-subtitle">Профіль та параметри платформи</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title mb-16">Профіль</div>
+            <div class="flex-center gap-16 mb-24">
+              <div class="avatar avatar-lg" id="settings-avatar">D</div>
+              <div>
+                <div class="font-500" id="settings-name">Дарина Коваль</div>
+                <div class="text-sm text-muted" id="settings-email">admin@school.com</div>
+                <div class="badge badge-blue mt-8" id="settings-role">Адміністратор</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ім'я</label>
+              <input class="form-input" type="text" placeholder="Ваше ім'я" id="settings-name-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" type="email" placeholder="email" id="settings-email-input" />
+            </div>
+            <button class="btn btn-accent" onclick="saveSettings()">Зберегти зміни</button>
+          </div>
+          <div class="card">
+            <div class="card-title mb-16">Параметри школи</div>
+            <div class="form-group">
+              <label class="form-label">Ціна за урок (₴)</label>
+              <input class="form-input" type="number" id="lesson-price" value="400" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Тривалість уроку (хв)</label>
+              <input class="form-input" type="number" id="lesson-duration" value="60" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Зміна паролю</label>
+              <input class="form-input" type="password" placeholder="Новий пароль" />
+            </div>
+            <button class="btn btn-accent" onclick="showToast('Налаштування збережено','success')">Зберегти</button>
+          </div>
+        </div>
+      </div>
+
+    </main><!-- /content -->
+  </div><!-- /app-body -->
+</div><!-- /app -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add Student -->
+<div class="modal-overlay" id="add-student-modal">
+  <div class="modal">
+    <div class="modal-title">Додати учня</div>
+    <div class="form-group">
+      <label class="form-label">Повне ім'я</label>
+      <input class="form-input" type="text" id="new-student-name" placeholder="Ім'я Прізвище" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="new-student-email" placeholder="student@email.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Рівень англійської</label>
+      <select class="select-input" id="new-student-level">
+        <option>Beginner (A1)</option><option>Elementary (A2)</option>
+        <option>Pre-Intermediate (B1)</option><option>Intermediate (B2)</option>
+        <option>Upper-Intermediate (C1)</option><option>Advanced (C2)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Телефон</label>
+      <input class="form-input" type="tel" id="new-student-phone" placeholder="+380..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-student-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addStudent()">Додати учня</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Student -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <div class="modal-title">Запросити учня</div>
+    <p class="text-sm text-muted mb-16">Відправте запрошення по email — учень зможе зареєструватись та приєднатись до платформи.</p>
+    <div class="form-group">
+      <label class="form-label">Email учня</label>
+      <input class="form-input" type="email" id="invite-email" placeholder="student@email.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Персональне повідомлення (опціонально)</label>
+      <textarea class="hw-editor" style="min-height:80px" id="invite-msg" placeholder="Привіт! Я запрошую тебе до своєї онлайн-школи..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('invite-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="sendInvite()">✉️ Відправити запрошення</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Lesson Material -->
+<div class="modal-overlay" id="add-lesson-modal">
+  <div class="modal">
+    <div class="modal-title">Додати навчальний матеріал</div>
+    <div class="form-group">
+      <label class="form-label">Назва</label>
+      <input class="form-input" type="text" id="new-lesson-title" placeholder="Назва матеріалу" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Тип</label>
+      <select class="select-input" id="new-lesson-type">
+        <option value="lesson">📚 Урок</option>
+        <option value="book">📖 Книга</option>
+        <option value="file">📎 Файл</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Опис</label>
+      <textarea class="hw-editor" style="min-height:80px" id="new-lesson-desc" placeholder="Опис матеріалу..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Посилання (Google Drive, тощо)</label>
+      <input class="form-input" type="url" id="new-lesson-url" placeholder="https://..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Рівень</label>
+      <select class="select-input" id="new-lesson-level">
+        <option>Всі рівні</option><option>A1-A2</option><option>B1-B2</option><option>C1-C2</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-lesson-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addLessonMaterial()">Додати</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Schedule -->
+<div class="modal-overlay" id="add-schedule-modal">
+  <div class="modal">
+    <div class="modal-title">Запланувати заняття</div>
+    <div class="form-group">
+      <label class="form-label">Учень</label>
+      <select class="select-input" id="schedule-student"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Дата</label>
+      <input class="form-input" type="date" id="schedule-date" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Час</label>
+      <input class="form-input" type="time" id="schedule-time" value="10:00" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Тип заняття</label>
+      <select class="select-input" id="schedule-type">
+        <option>Індивідуальне</option><option>Онлайн (Zoom)</option><option>Google Meet</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-schedule-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addSchedule()">Запланувати</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Homework -->
+<div class="modal-overlay" id="create-hw-modal">
+  <div class="modal">
+    <div class="modal-title">Нове домашнє завдання</div>
+    <div class="form-group">
+      <label class="form-label">Учень</label>
+      <select class="select-input" id="hw-student"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Заголовок завдання</label>
+      <input class="form-input" type="text" id="hw-title" placeholder="Наприклад: Вправа 5 стор. 42" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Опис / Інструкція</label>
+      <textarea class="hw-editor" id="hw-desc" placeholder="Детальний опис завдання..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Дедлайн</label>
+      <input class="form-input" type="date" id="hw-deadline" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('create-hw-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="createHomework()">Створити завдання</button>
+    </div>
+  </div>
+</div>
+
+<!-- Grade Homework -->
+<div class="modal-overlay" id="grade-hw-modal">
+  <div class="modal">
+    <div class="modal-title">Перевірка завдання</div>
+    <div id="grade-hw-content"></div>
+    <div class="form-group mt-16">
+      <label class="form-label">Оцінка (1-12)</label>
+      <input class="form-input" type="number" min="1" max="12" id="hw-grade" placeholder="10" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Коментар вчителя</label>
+      <textarea class="hw-editor" style="min-height:80px" id="hw-comment" placeholder="Відгук та коментар..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('grade-hw-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="gradeHomework()">Поставити оцінку</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Video -->
+<div class="modal-overlay" id="add-video-modal">
+  <div class="modal">
+    <div class="modal-title">Додати відео</div>
+    <div class="form-group">
+      <label class="form-label">Назва</label>
+      <input class="form-input" type="text" id="new-video-title" placeholder="Назва відео" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">YouTube / Vimeo посилання</label>
+      <input class="form-input" type="url" id="new-video-url" placeholder="https://youtube.com/..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Опис</label>
+      <textarea class="hw-editor" style="min-height:80px" id="new-video-desc" placeholder="Про що це відео..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-video-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addVideo()">Додати відео</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Online Link -->
+<div class="modal-overlay" id="add-link-modal">
+  <div class="modal">
+    <div class="modal-title">Додати посилання для заняття</div>
+    <div class="form-group">
+      <label class="form-label">Платформа</label>
+      <select class="select-input" id="link-platform">
+        <option>Zoom</option><option>Google Meet</option><option>Skype</option><option>Teams</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Назва / Опис</label>
+      <input class="form-input" type="text" id="link-name" placeholder="Наприклад: Постійна кімната Zoom" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Посилання</label>
+      <input class="form-input" type="url" id="link-url" placeholder="https://zoom.us/j/..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-link-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addOnlineLink()">Додати</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Payment -->
+<div class="modal-overlay" id="add-payment-modal">
+  <div class="modal">
+    <div class="modal-title">Записати платіж</div>
+    <div class="form-group">
+      <label class="form-label">Учень</label>
+      <select class="select-input" id="payment-student"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Кількість уроків</label>
+      <input class="form-input" type="number" id="payment-lessons" min="1" value="1" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Сума (₴)</label>
+      <input class="form-input" type="number" id="payment-amount" value="400" readonly />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-payment-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addPayment()">Записати платіж</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Resource -->
+<div class="modal-overlay" id="add-resource-modal">
+  <div class="modal">
+    <div class="modal-title">Додати ресурс до бібліотеки</div>
+    <div class="form-group">
+      <label class="form-label">Назва</label>
+      <input class="form-input" type="text" id="res-title" placeholder="Назва ресурсу" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Тип</label>
+      <select class="select-input" id="res-type">
+        <option value="book">📖 Книга</option>
+        <option value="file">📎 Документ/PDF</option>
+        <option value="photo">🖼 Фото матеріал</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Посилання (Google Drive, Dropbox, тощо)</label>
+      <input class="form-input" type="url" id="res-url" placeholder="https://drive.google.com/..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Опис</label>
+      <textarea class="hw-editor" style="min-height:80px" id="res-desc"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('add-resource-modal')">Скасувати</button>
+      <button class="btn btn-accent" onclick="addResource()">Додати</button>
+    </div>
+  </div>
+</div>
+
+<!-- Student Detail Modal -->
+<div class="modal-overlay" id="student-detail-modal">
+  <div class="modal" style="width:600px">
+    <div id="student-detail-content"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('student-detail-modal')">Закрити</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ===== DATA STORE (mock database) =====
+const DB = {
+  users: [
+    { id:1, name:'Дарина Коваль', email:'admin@school.com', pass:'admin123', role:'admin', avatar:'ДК' },
+    { id:2, name:'Максим Іваненко', email:'student@school.com', pass:'student123', role:'student', avatar:'МІ', level:'B1', phone:'+38050111222', balance:3, createdAt:'2025-01-15' },
+    { id:3, name:'Аліна Петрова', email:'alina@email.com', pass:'alina123', role:'student', avatar:'АП', level:'A2', phone:'+38067333444', balance:5, createdAt:'2025-02-20' },
+    { id:4, name:'Олег Мороз', email:'oleg@email.com', pass:'oleg123', role:'student', avatar:'ОМ', level:'B2', phone:'+38099555666', balance:1, createdAt:'2025-03-05' },
+    { id:5, name:'Катерина Лис', email:'katia@email.com', pass:'katia123', role:'student', avatar:'КЛ', level:'C1', phone:'+38066777888', balance:8, createdAt:'2025-03-12' },
+    { id:6, name:'Богдан Ткач', email:'bogdan@email.com', pass:'bogdan123', role:'student', avatar:'БТ', level:'A1', phone:'+38044999000', balance:0, createdAt:'2025-04-01' },
+  ],
+  lessons: [
+    { id:1, title:'Present Simple vs Continuous', type:'lesson', desc:'Базова граматика теперішніх часів', level:'A2-B1', url:'', emoji:'📚', createdAt:'2025-04-10' },
+    { id:2, title:'English File Intermediate', type:'book', desc:'Підручник для рівня Intermediate', level:'B1-B2', url:'https://drive.google.com', emoji:'📖', createdAt:'2025-04-08' },
+    { id:3, title:'Vocabulary List Unit 3', type:'file', desc:'Список слів до 3-го розділу', level:'Всі рівні', url:'', emoji:'📎', createdAt:'2025-04-05' },
+    { id:4, title:'Conditionals: Types 1-3', type:'lesson', desc:'Умовні речення всіх типів', level:'B1-B2', url:'', emoji:'📚', createdAt:'2025-03-28' },
+  ],
+  schedules: [
+    { id:1, studentId:2, date:'2026-05-02', time:'10:00', type:'Онлайн (Zoom)', status:'planned' },
+    { id:2, studentId:3, date:'2026-05-02', time:'14:00', type:'Індивідуальне', status:'planned' },
+    { id:3, studentId:4, date:'2026-05-04', time:'11:00', type:'Google Meet', status:'planned' },
+    { id:4, studentId:2, date:'2026-04-28', time:'10:00', type:'Онлайн (Zoom)', status:'completed' },
+    { id:5, studentId:3, date:'2026-04-25', time:'14:00', type:'Індивідуальне', status:'missed' },
+    { id:6, studentId:5, date:'2026-05-05', time:'16:00', type:'Онлайн (Zoom)', status:'planned' },
+  ],
+  homework: [
+    { id:1, studentId:2, title:'Вправа 1-5 стор. 36', desc:'Виконати вправи на Present Simple', deadline:'2026-05-05', status:'submitted', answer:'I go to school every day. She works at the hospital. We play football on weekends.', grade:null, comment:'' },
+    { id:2, studentId:3, title:'Reading Comprehension', desc:'Прочитати текст та відповісти на питання', deadline:'2026-05-03', status:'submitted', answer:'1. He lives in London. 2. She is a doctor.', grade:null, comment:'' },
+    { id:3, studentId:4, title:'Write about your weekend', desc:'Написати невеликий текст про вихідні (80-100 слів)', deadline:'2026-05-06', status:'pending', answer:'', grade:null, comment:'' },
+    { id:4, studentId:2, title:'Vocabulary: Unit 5', desc:'Вивчити слова та скласти речення', deadline:'2026-04-30', status:'graded', answer:'I appreciate your help. She achieved her goals.', grade:11, comment:'Відмінна робота! Всі слова використані правильно.' },
+  ],
+  videos: [
+    { id:1, title:'BBC Learning English: Present Tenses', url:'https://youtube.com', desc:'Відео-урок від BBC', emoji:'🎬' },
+    { id:2, title:'EnglishPod: Everyday Conversations', url:'https://youtube.com', desc:'Діалоги на кожен день', emoji:'🎙' },
+  ],
+  onlineLinks: [
+    { id:1, platform:'Zoom', name:'Постійна кімната Дарини', url:'https://zoom.us/j/1234567890', emoji:'📹' },
+    { id:2, platform:'Google Meet', name:'Резервна кімната Meet', url:'https://meet.google.com/abc-defg-hij', emoji:'🎥' },
+  ],
+  resources: [
+    { id:1, title:'Oxford English Grammar', type:'book', desc:'Граматичний довідник Oxford', url:'https://drive.google.com', emoji:'📖' },
+    { id:2, title:'Phrases and Idioms', type:'file', desc:'Збірник ідіом та фраз', url:'', emoji:'📄' },
+    { id:3, title:'British Council Materials', type:'file', desc:'Офіційні матеріали British Council', url:'https://britishcouncil.org', emoji:'📎' },
+  ],
+  payments: [
+    { id:1, studentId:2, date:'2026-04-15', lessons:5, amount:2000, status:'paid' },
+    { id:2, studentId:3, date:'2026-04-20', lessons:8, amount:3200, status:'paid' },
+    { id:3, studentId:4, date:'2026-04-28', lessons:3, amount:1200, status:'paid' },
+    { id:4, studentId:5, date:'2026-05-01', lessons:10, amount:4000, status:'paid' },
+    { id:5, studentId:6, date:'2026-04-10', lessons:2, amount:800, status:'paid' },
+  ]
+};
+
+// ===== STATE =====
+let currentUser = null;
+let currentPage = 'dashboard';
+let calYear = 2026, calMonth = 4; // May 2026 (0-indexed)
+let gradeHwId = null;
+let wbColor = '#1A1A18', wbSize = 3, wbTool = 'draw';
+let wbDrawing = false, wbLastX = 0, wbLastY = 0;
+
+// ===== UTILITIES =====
+const $ = id => document.getElementById(id);
+const studentName = id => { const s = DB.users.find(u=>u.id===id); return s?s.name:'Невідомо'; };
+const studentAvatar = id => { const s = DB.users.find(u=>u.id===id); return s?s.avatar:'??'; };
+const students = () => DB.users.filter(u=>u.role==='student');
+const formatDate = d => { if(!d) return ''; const dt = new Date(d); return dt.toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'}); };
+const gradeColor = g => g>=10?'green':g>=7?'amber':'red';
+const statusBadge = s => ({ planned:'<span class="badge badge-blue">Заплановано</span>', completed:'<span class="badge badge-green">Проведено</span>', missed:'<span class="badge badge-red">Пропущено</span>', pending:'<span class="badge badge-amber">Очікує</span>', submitted:'<span class="badge badge-blue">Здано</span>', graded:'<span class="badge badge-green">Оцінено</span>' })[s]||'';
+
+function showToast(msg, type='') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  $('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ===== AUTH =====
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((el,i) => el.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  $('login-form').style.display = tab==='login'?'':'none';
+  $('register-form').style.display = tab==='register'?'':'none';
+}
+
+function doLogin() {
+  const email = $('login-email').value.trim();
+  const pass = $('login-pass').value.trim();
+  const user = DB.users.find(u => u.email===email && u.pass===pass);
+  if (!user) { showToast('Невірний email або пароль','error'); return; }
+  currentUser = user;
+  $('auth-overlay').classList.add('hidden');
+  $('app').classList.add('visible');
+  setTimeout(() => $('auth-overlay').style.display='none', 400);
+  initApp();
+}
+
+function doRegister() {
+  const name = $('reg-name').value.trim();
+  const email = $('reg-email').value.trim();
+  const pass = $('reg-pass').value.trim();
+  if (!name||!email||!pass) { showToast('Заповніть всі поля','error'); return; }
+  if (DB.users.find(u=>u.email===email)) { showToast('Email вже використовується','error'); return; }
+  const user = { id: Date.now(), name, email, pass, role:'student', avatar: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(), level:'Beginner', phone:'', balance:0, createdAt: new Date().toISOString().slice(0,10) };
+  DB.users.push(user);
+  currentUser = user;
+  $('auth-overlay').classList.add('hidden');
+  $('app').classList.add('visible');
+  setTimeout(() => $('auth-overlay').style.display='none', 400);
+  initApp();
+}
+
+function doLogout() {
+  currentUser = null;
+  $('auth-overlay').style.display='flex';
+  $('auth-overlay').style.opacity='0';
+  $('app').classList.remove('visible');
+  $('auth-overlay').classList.remove('hidden');
+  requestAnimationFrame(() => { $('auth-overlay').style.opacity='1'; });
+  $('auth-overlay').style.transition = 'opacity 0.3s';
+}
+
+// ===== APP INIT =====
+function initApp() {
+  const isAdmin = currentUser.role === 'admin';
+
+  // Update UI for role
+  $('top-avatar').textContent = currentUser.avatar;
+  $('top-name').textContent = currentUser.name;
+  $('top-role').textContent = isAdmin ? 'Адміністратор' : 'Учень';
+  $('greeting-name').textContent = currentUser.name.split(' ')[0];
+  $('greeting-date').textContent = 'Сьогодні, ' + new Date().toLocaleDateString('uk-UA', { weekday:'long', day:'numeric', month:'long' });
+
+  // Settings
+  $('settings-avatar').textContent = currentUser.avatar;
+  $('settings-name').textContent = currentUser.name;
+  $('settings-email').textContent = currentUser.email;
+  $('settings-role').textContent = isAdmin ? 'Адміністратор' : 'Учень';
+  $('settings-name-input').value = currentUser.name;
+  $('settings-email-input').value = currentUser.email;
+
+  // Role-based visibility
+  if (!isAdmin) {
+    document.querySelectorAll('.admin-only').forEach(el => el.remove());
+    $('add-lesson-btn') && ($('add-lesson-btn').style.display='none');
+    $('create-hw-btn') && ($('create-hw-btn').style.display='none');
+  }
+  $('hw-badge').style.display = isAdmin && DB.homework.filter(h=>h.status==='submitted').length>0 ? '' : 'none';
+
+  navigate('dashboard');
+  renderCalendar();
+  renderPaymentStudentSelect();
+  populateStudentSelects();
+}
+
+// ===== NAVIGATION =====
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pageEl = $(`page-${page}`);
+  if (pageEl) { pageEl.classList.add('active'); currentPage = page; }
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === `navigate('${page}')`) n.classList.add('active');
+  });
+
+  // Lazy render
+  const renders = {
+    dashboard: renderDashboard,
+    students: renderStudents,
+    lessons: renderLessons,
+    calendar: renderCalendar,
+    homework: renderHomework,
+    library: renderLibrary,
+    videos: renderVideos,
+    online: renderOnline,
+    payments: renderPayments,
+    whiteboard: initWhiteboard,
+  };
+  if (renders[page]) renders[page]();
+
+  // Close sidebar on mobile
+  if (window.innerWidth <= 768) {
+    $('sidebar').classList.remove('open');
+    $('sidebar-overlay').classList.remove('open');
+  }
+}
+
+function toggleSidebar() {
+  $('sidebar').classList.toggle('open');
+  $('sidebar-overlay').classList.toggle('open');
+}
+
+// ===== MODALS =====
+function openModal(id) {
+  $(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  $(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+});
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const today = new Date().toISOString().slice(0,10);
+  const todayLessons = DB.schedules.filter(s => s.date === today);
+  $('today-lessons').innerHTML = todayLessons.length ? todayLessons.map(l => `
+    <div class="flex-center gap-12" style="padding:10px 0;border-bottom:0.5px solid var(--c-border)">
+      <div class="avatar">${studentAvatar(l.studentId)}</div>
+      <div style="flex:1">
+        <div class="font-500 text-sm">${studentName(l.studentId)}</div>
+        <div class="text-xs text-muted">${l.time} · ${l.type}</div>
+      </div>
+      ${statusBadge(l.status)}
+    </div>
+  `).join('') : '<div class="empty-state"><div class="empty-icon">☀️</div><p>Занять сьогодні немає</p></div>';
+
+  const pendingHw = DB.homework.filter(h => h.status==='submitted').slice(0,3);
+  $('recent-hw').innerHTML = pendingHw.length ? pendingHw.map(h => `
+    <div class="flex-center gap-12" style="padding:10px 0;border-bottom:0.5px solid var(--c-border)">
+      <div class="avatar" style="background:var(--c-amber)">${studentAvatar(h.studentId)}</div>
+      <div style="flex:1">
+        <div class="font-500 text-sm">${h.title}</div>
+        <div class="text-xs text-muted">${studentName(h.studentId)} · Дедлайн: ${formatDate(h.deadline)}</div>
+      </div>
+      <button class="btn btn-sm btn-accent" onclick="openGradeModal(${h.id})">Перевірити</button>
+    </div>
+  `).join('') : '<div class="empty-state"><div class="empty-icon">✅</div><p>Нових завдань немає</p></div>';
+}
+
+// ===== STUDENTS =====
+function renderStudents(filter='') {
+  const list = students().filter(s => !filter || s.name.toLowerCase().includes(filter.toLowerCase()));
+  $('students-count').textContent = students().length;
+  $('students-list').innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Учень</th><th>Рівень</th><th>Баланс уроків</th><th>Дата реєстрації</th><th>Дії</th></tr></thead>
+        <tbody>
+          ${list.map(s => `
+          <tr>
+            <td>
+              <div class="flex-center gap-12">
+                <div class="avatar">${s.avatar}</div>
+                <div>
+                  <div class="font-500">${s.name}</div>
+                  <div class="text-xs text-muted">${s.email}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge badge-blue">${s.level}</span></td>
+            <td>
+              <div class="flex-center gap-8">
+                <span class="font-500">${s.balance}</span>
+                <div class="progress-bar" style="width:80px">
+                  <div class="progress-fill" style="width:${Math.min(s.balance*10,100)}%"></div>
+                </div>
+              </div>
+            </td>
+            <td class="text-muted">${formatDate(s.createdAt)}</td>
+            <td>
+              <div class="flex gap-8">
+                <button class="btn btn-sm btn-outline" onclick="viewStudent(${s.id})">Профіль</button>
+                ${currentUser.role==='admin' ? `<button class="btn btn-sm btn-danger" onclick="removeStudent(${s.id})">Видалити</button>` : ''}
+              </div>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function filterStudents(v) { renderStudents(v); }
+
+function viewStudent(id) {
+  const s = DB.users.find(u=>u.id===id);
+  const hw = DB.homework.filter(h=>h.studentId===id);
+  const sched = DB.schedules.filter(sch=>sch.studentId===id);
+  const completed = sched.filter(sc=>sc.status==='completed').length;
+  const missed = sched.filter(sc=>sc.status==='missed').length;
+  $('student-detail-content').innerHTML = `
+    <div class="flex-center gap-16 mb-24">
+      <div class="avatar avatar-lg">${s.avatar}</div>
+      <div>
+        <div style="font-size:18px;font-weight:600">${s.name}</div>
+        <div class="text-sm text-muted">${s.email} · ${s.phone||'Телефон не вказано'}</div>
+        <span class="badge badge-blue mt-8">${s.level}</span>
+      </div>
+    </div>
+    <div class="stats-grid mb-24" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">Баланс уроків</div><div class="stat-value" style="color:var(--c-accent)">${s.balance}</div></div>
+      <div class="stat-card"><div class="stat-label">Проведено</div><div class="stat-value" style="color:var(--c-green)">${completed}</div></div>
+      <div class="stat-card"><div class="stat-label">Пропущено</div><div class="stat-value" style="color:var(--c-red)">${missed}</div></div>
+    </div>
+    <div class="card-title mb-8">Домашні завдання</div>
+    ${hw.length ? hw.map(h=>`
+      <div style="padding:8px 0;border-bottom:0.5px solid var(--c-border);display:flex;align-items:center;gap:12px">
+        <div style="flex:1"><div class="font-500 text-sm">${h.title}</div><div class="text-xs text-muted">Дедлайн: ${formatDate(h.deadline)}</div></div>
+        ${statusBadge(h.status)}
+        ${h.grade ? `<span class="badge badge-${gradeColor(h.grade)}">${h.grade}/12</span>` : ''}
+      </div>`).join('') : '<p class="text-sm text-muted">Завдань немає</p>'}
+  `;
+  openModal('student-detail-modal');
+}
+
+function removeStudent(id) {
+  if (!confirm('Видалити учня?')) return;
+  const idx = DB.users.findIndex(u=>u.id===id);
+  if (idx>-1) { DB.users.splice(idx,1); renderStudents(); showToast('Учня видалено'); }
+}
+
+function addStudent() {
+  const name = $('new-student-name').value.trim();
+  const email = $('new-student-email').value.trim();
+  if (!name||!email) { showToast('Заповніть обов\'язкові поля','error'); return; }
+  const s = {
+    id: Date.now(), name, email, pass: Math.random().toString(36).slice(2,8),
+    role:'student', avatar: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(),
+    level: $('new-student-level').value, phone: $('new-student-phone').value,
+    balance: 0, createdAt: new Date().toISOString().slice(0,10)
+  };
+  DB.users.push(s);
+  closeModal('add-student-modal');
+  renderStudents();
+  populateStudentSelects();
+  showToast(`${name} доданий(-а) як учень`, 'success');
+  $('new-student-name').value = ''; $('new-student-email').value = ''; $('new-student-phone').value = '';
+}
+
+function sendInvite() {
+  const email = $('invite-email').value.trim();
+  if (!email) { showToast('Введіть email','error'); return; }
+  closeModal('invite-modal');
+  showToast(`Запрошення відправлено на ${email}`, 'success');
+  $('invite-email').value = '';
+}
+
+// ===== LESSONS =====
+const lessonEmoji = { lesson:'📚', book:'📖', file:'📎' };
+function renderLessons() {
+  const all = DB.lessons;
+  const books = all.filter(l=>l.type==='book');
+  const files = all.filter(l=>l.type==='file');
+  const renderCards = (items) => items.map(l=>`
+    <div class="content-card">
+      <div class="content-card-thumb" style="background:${l.type==='lesson'?'var(--c-accent-light)':l.type==='book'?'var(--c-green-light)':'var(--c-amber-light)'}">
+        <span>${lessonEmoji[l.type]||'📄'}</span>
+      </div>
+      <div class="content-card-body">
+        <div class="content-card-title">${l.title}</div>
+        <div class="content-card-meta">${l.desc}</div>
+        <div class="content-card-tags">
+          <span class="badge badge-gray">${l.level}</span>
+          ${l.url?`<a href="${l.url}" target="_blank" class="badge badge-blue">Відкрити ↗</a>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+  $('lessons-grid').innerHTML = renderCards(all) || '<div class="empty-state"><div class="empty-icon">📚</div><p>Матеріалів ще немає</p></div>';
+  $('books-grid').innerHTML = renderCards(books);
+  $('files-grid').innerHTML = renderCards(files);
+}
+
+function addLessonMaterial() {
+  const title = $('new-lesson-title').value.trim();
+  if (!title) { showToast('Введіть назву','error'); return; }
+  DB.lessons.push({
+    id: Date.now(), title, type: $('new-lesson-type').value,
+    desc: $('new-lesson-desc').value, url: $('new-lesson-url').value,
+    level: $('new-lesson-level').value, emoji:'📄', createdAt: new Date().toISOString().slice(0,10)
+  });
+  closeModal('add-lesson-modal');
+  renderLessons();
+  showToast('Матеріал додано','success');
+  $('new-lesson-title').value=''; $('new-lesson-desc').value=''; $('new-lesson-url').value='';
+}
+
+// ===== CALENDAR =====
+const ukMonths = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+const ukDays = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+
+function renderCalendar() {
+  $('cal-month-title').textContent = `${ukMonths[calMonth]} ${calYear}`;
+  const header = $('calendar-days-header');
+  header.innerHTML = ukDays.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+
+  const first = new Date(calYear, calMonth, 1);
+  const startDay = (first.getDay()+6)%7; // Monday=0
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  let html = '';
+  for (let i=0;i<startDay;i++) html += '<div class="cal-day empty"></div>';
+  for (let d=1;d<=daysInMonth;d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayScheds = DB.schedules.filter(s=>s.date===dateStr);
+    const isToday = dateStr===todayStr;
+    const hasLesson = dayScheds.some(s=>s.status!=='missed');
+    const hasMissed = dayScheds.some(s=>s.status==='missed');
+    html += `<div class="cal-day${isToday?' today':''}${hasLesson?' has-lesson':''}${hasMissed?' missed':''}" onclick="showCalDay('${dateStr}')">${d}</div>`;
+  }
+  $('calendar-days').innerHTML = html;
+
+  // Schedule table
+  const tbody = $('schedule-tbody');
+  tbody.innerHTML = DB.schedules.map(s=>`
+    <tr>
+      <td><div class="flex-center gap-8"><div class="avatar" style="width:28px;height:28px;font-size:10px">${studentAvatar(s.studentId)}</div>${studentName(s.studentId)}</div></td>
+      <td>${formatDate(s.date)}</td><td>${s.time}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td>
+        ${currentUser.role==='admin' ? `
+          <button class="btn btn-sm btn-outline" onclick="markSchedule(${s.id},'completed')">✓</button>
+          <button class="btn btn-sm btn-danger" onclick="markSchedule(${s.id},'missed')">✗</button>
+        ` : ''}
+      </td>
+    </tr>`).join('');
+}
+
+function showCalDay(date) {
+  $('cal-selected-date').textContent = formatDate(date);
+  const dayScheds = DB.schedules.filter(s=>s.date===date);
+  $('cal-day-details').innerHTML = dayScheds.length
+    ? dayScheds.map(s=>`
+      <div class="flex-center gap-12" style="padding:10px 0;border-bottom:0.5px solid var(--c-border)">
+        <div class="avatar">${studentAvatar(s.studentId)}</div>
+        <div style="flex:1">
+          <div class="font-500 text-sm">${studentName(s.studentId)}</div>
+          <div class="text-xs text-muted">${s.time} · ${s.type}</div>
+        </div>
+        ${statusBadge(s.status)}
+      </div>`).join('')
+    : '<div class="empty-state"><div class="empty-icon">📆</div><p>Занять на цей день немає</p></div>';
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth>11) { calMonth=0; calYear++; }
+  if (calMonth<0) { calMonth=11; calYear--; }
+  renderCalendar();
+}
+
+function markSchedule(id, status) {
+  const s = DB.schedules.find(sc=>sc.id===id);
+  if (s) { s.status=status; renderCalendar(); showToast(`Заняття позначено: ${status==='completed'?'Проведено':'Пропущено'}`,'success'); }
+}
+
+function addSchedule() {
+  const sid = parseInt($('schedule-student').value);
+  const date = $('schedule-date').value;
+  const time = $('schedule-time').value;
+  if (!sid||!date) { showToast('Заповніть всі поля','error'); return; }
+  DB.schedules.push({ id:Date.now(), studentId:sid, date, time, type:$('schedule-type').value, status:'planned' });
+  closeModal('add-schedule-modal');
+  renderCalendar();
+  showToast('Заняття заплановано','success');
+}
+
+// ===== HOMEWORK =====
+function renderHomework() {
+  const isAdmin = currentUser.role === 'admin';
+  const all = isAdmin ? DB.homework : DB.homework.filter(h=>h.studentId===currentUser.id);
+  const pending = all.filter(h=>h.status==='submitted');
+
+  $('pending-hw-list').innerHTML = pending.length ? pending.map(h=>hwCard(h,true)).join('') :
+    '<div class="empty-state"><div class="empty-icon">✅</div><p>Немає завдань на перевірку</p></div>';
+  $('all-hw-list').innerHTML = all.length ? all.map(h=>hwCard(h,isAdmin)).join('') :
+    '<div class="empty-state"><div class="empty-icon">📝</div><p>Завдань ще немає</p></div>';
+
+  if (!isAdmin) {
+    $('my-hw-list').innerHTML = all.map(h=>studentHwCard(h)).join('') ||
+      '<div class="empty-state"><div class="empty-icon">📝</div><p>Завдань немає</p></div>';
+    $('my-hw-tab').style.display='';
+  } else {
+    $('my-hw-tab').style.display='none';
+  }
+}
+
+function hwCard(h, showActions) {
+  return `
+    <div class="card card-sm mb-16">
+      <div class="flex-between mb-8">
+        <div class="font-500">${h.title}</div>
+        ${statusBadge(h.status)}
+      </div>
+      <div class="text-sm text-muted mb-8">Учень: ${studentName(h.studentId)} · Дедлайн: ${formatDate(h.deadline)}</div>
+      <div class="text-sm" style="background:var(--c-bg);padding:10px;border-radius:var(--radius-sm);margin-bottom:8px">${h.desc}</div>
+      ${h.answer?`<div class="text-sm" style="background:var(--c-accent-light);padding:10px;border-radius:var(--radius-sm);margin-bottom:8px"><strong>Відповідь:</strong> ${h.answer}</div>`:''}
+      ${h.grade?`<div class="flex gap-8 mt-8"><span class="badge badge-${gradeColor(h.grade)}">Оцінка: ${h.grade}/12</span>${h.comment?`<span class="text-sm text-muted">${h.comment}</span>`:''}</div>`:''}
+      ${showActions&&h.status==='submitted'?`<div class="flex gap-8 mt-12"><button class="btn btn-accent btn-sm" onclick="openGradeModal(${h.id})">✓ Перевірити</button></div>`:''}
+    </div>`;
+}
+
+function studentHwCard(h) {
+  return `
+    <div class="card card-sm mb-16">
+      <div class="flex-between mb-8">
+        <div class="font-500">${h.title}</div>
+        ${statusBadge(h.status)}
+      </div>
+      <div class="text-sm text-muted mb-8">Дедлайн: ${formatDate(h.deadline)}</div>
+      <div class="text-sm mb-12">${h.desc}</div>
+      ${h.status==='pending'?`
+        <textarea class="hw-editor" id="hw-answer-${h.id}" placeholder="Ваша відповідь...">${h.answer||''}</textarea>
+        <button class="btn btn-accent btn-sm mt-8" onclick="submitHomework(${h.id})">Здати завдання</button>
+      `:''}
+      ${h.grade?`<span class="badge badge-${gradeColor(h.grade)}" style="margin-top:8px">Оцінка: ${h.grade}/12</span>${h.comment?`<p class="text-sm text-muted mt-8">${h.comment}</p>`:''}`:''}
+    </div>`;
+}
+
+function submitHomework(id) {
+  const h = DB.homework.find(hw=>hw.id===id);
+  const answer = $(`hw-answer-${id}`).value.trim();
+  if (!answer) { showToast('Напишіть відповідь','error'); return; }
+  h.answer = answer; h.status = 'submitted';
+  renderHomework();
+  showToast('Завдання здано!','success');
+}
+
+function openGradeModal(id) {
+  gradeHwId = id;
+  const h = DB.homework.find(hw=>hw.id===id);
+  $('grade-hw-content').innerHTML = `
+    <p class="font-500">${h.title}</p>
+    <p class="text-sm text-muted mb-8">Учень: ${studentName(h.studentId)}</p>
+    <div class="text-sm" style="background:var(--c-accent-light);padding:12px;border-radius:var(--radius-sm)">
+      <strong>Відповідь учня:</strong><br>${h.answer}
+    </div>
+  `;
+  $('hw-grade').value=''; $('hw-comment').value='';
+  openModal('grade-hw-modal');
+}
+
+function gradeHomework() {
+  const grade = parseInt($('hw-grade').value);
+  if (!grade||grade<1||grade>12) { showToast('Введіть оцінку від 1 до 12','error'); return; }
+  const h = DB.homework.find(hw=>hw.id===gradeHwId);
+  h.grade=grade; h.comment=$('hw-comment').value; h.status='graded';
+  closeModal('grade-hw-modal');
+  renderHomework();
+  showToast(`Оцінку ${grade}/12 поставлено`,'success');
+}
+
+function createHomework() {
+  const sid = parseInt($('hw-student').value);
+  const title = $('hw-title').value.trim();
+  if (!sid||!title) { showToast('Заповніть обов\'язкові поля','error'); return; }
+  DB.homework.push({ id:Date.now(), studentId:sid, title, desc:$('hw-desc').value, deadline:$('hw-deadline').value, status:'pending', answer:'', grade:null, comment:'' });
+  closeModal('create-hw-modal');
+  renderHomework();
+  showToast('Завдання створено','success');
+  $('hw-title').value=''; $('hw-desc').value='';
+}
+
+// ===== LIBRARY =====
+function renderLibrary() {
+  $('library-grid').innerHTML = DB.resources.map(r=>`
+    <div class="content-card">
+      <div class="content-card-thumb" style="background:${r.type==='book'?'var(--c-green-light)':r.type==='photo'?'var(--c-amber-light)':'var(--c-bg)'}">
+        <span>${r.emoji}</span>
+      </div>
+      <div class="content-card-body">
+        <div class="content-card-title">${r.title}</div>
+        <div class="content-card-meta">${r.desc}</div>
+        <div class="content-card-tags">
+          ${r.url?`<a href="${r.url}" target="_blank" class="badge badge-blue">Відкрити ↗</a>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addResource() {
+  const title = $('res-title').value.trim();
+  if (!title) { showToast('Введіть назву','error'); return; }
+  const type = $('res-type').value;
+  const emojis = {book:'📖',file:'📄',photo:'🖼'};
+  DB.resources.push({ id:Date.now(), title, type, desc:$('res-desc').value, url:$('res-url').value, emoji:emojis[type]||'📄' });
+  closeModal('add-resource-modal');
+  renderLibrary();
+  showToast('Ресурс додано','success');
+  $('res-title').value=''; $('res-desc').value=''; $('res-url').value='';
+}
+
+// ===== VIDEOS =====
+function renderVideos() {
+  $('videos-grid').innerHTML = DB.videos.map(v=>`
+    <div class="content-card">
+      <div class="content-card-thumb" style="background:var(--c-red-light)">
+        <span>▶️</span>
+      </div>
+      <div class="content-card-body">
+        <div class="content-card-title">${v.title}</div>
+        <div class="content-card-meta">${v.desc}</div>
+        <div class="content-card-tags">
+          <a href="${v.url}" target="_blank" class="badge badge-red">Переглянути ↗</a>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addVideo() {
+  const title = $('new-video-title').value.trim();
+  const url = $('new-video-url').value.trim();
+  if (!title||!url) { showToast('Заповніть назву та посилання','error'); return; }
+  DB.videos.push({ id:Date.now(), title, url, desc:$('new-video-desc').value, emoji:'🎬' });
+  closeModal('add-video-modal');
+  renderVideos();
+  showToast('Відео додано','success');
+  $('new-video-title').value=''; $('new-video-url').value=''; $('new-video-desc').value='';
+}
+
+// ===== ONLINE LINKS =====
+const platformEmoji = { Zoom:'📹', 'Google Meet':'🎥', Skype:'💬', Teams:'🟦' };
+function renderOnline() {
+  $('online-links-grid').innerHTML = DB.onlineLinks.map(l=>`
+    <div class="link-card" onclick="window.open('${l.url}','_blank')">
+      <div class="link-icon" style="font-size:24px">${platformEmoji[l.platform]||'🔗'}</div>
+      <div>
+        <div class="font-500">${l.name}</div>
+        <div class="text-xs text-muted">${l.platform}</div>
+        <div class="text-xs text-muted" style="margin-top:4px;font-family:monospace">${l.url.slice(0,40)}...</div>
+      </div>
+    </div>`).join('');
+}
+
+function addOnlineLink() {
+  const name = $('link-name').value.trim();
+  const url = $('link-url').value.trim();
+  if (!name||!url) { showToast('Заповніть всі поля','error'); return; }
+  DB.onlineLinks.push({ id:Date.now(), platform:$('link-platform').value, name, url, emoji:'🔗' });
+  closeModal('add-link-modal');
+  renderOnline();
+  showToast('Посилання додано','success');
+  $('link-name').value=''; $('link-url').value='';
+}
+
+// ===== PAYMENTS =====
+function renderPayments() {
+  // Balance table
+  $('students-balance').innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Учень</th><th>Баланс уроків</th><th>Дій</th></tr></thead>
+        <tbody>
+          ${students().map(s=>`
+          <tr>
+            <td><div class="flex-center gap-8"><div class="avatar" style="width:28px;height:28px;font-size:10px">${s.avatar}</div>${s.name}</div></td>
+            <td><span class="badge badge-${s.balance>2?'green':s.balance>0?'amber':'red'}">${s.balance} уроків</span></td>
+            <td>
+              <button class="btn btn-sm btn-accent" onclick="topUpBalance(${s.id})">+ Поповнити</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  $('payments-tbody').innerHTML = DB.payments.map(p=>`
+    <tr>
+      <td><div class="flex-center gap-8"><div class="avatar" style="width:28px;height:28px;font-size:10px">${studentAvatar(p.studentId)}</div>${studentName(p.studentId)}</div></td>
+      <td>${formatDate(p.date)}</td>
+      <td>${p.lessons}</td>
+      <td class="font-500">${p.amount.toLocaleString('uk-UA')} ₴</td>
+      <td>${statusBadge(p.status)}</td>
+    </tr>`).join('');
+}
+
+function topUpBalance(studentId) {
+  openModal('add-payment-modal');
+  $('payment-student').value = studentId;
+  updatePaymentAmount();
+}
+
+function renderPaymentStudentSelect() {
+  const opts = students().map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  $('payment-student').innerHTML = opts;
+  updatePaymentAmount();
+}
+
+function updatePaymentAmount() {
+  const lessons = parseInt($('payment-lessons').value)||1;
+  $('payment-amount').value = lessons * 400;
+}
+document.addEventListener('DOMContentLoaded', () => {
+  $('payment-lessons') && $('payment-lessons').addEventListener('input', updatePaymentAmount);
+});
+
+function addPayment() {
+  const sid = parseInt($('payment-student').value);
+  const lessons = parseInt($('payment-lessons').value)||1;
+  const amount = lessons*400;
+  const s = DB.users.find(u=>u.id===sid);
+  if (s) { s.balance += lessons; }
+  DB.payments.push({ id:Date.now(), studentId:sid, date:new Date().toISOString().slice(0,10), lessons, amount, status:'paid' });
+  closeModal('add-payment-modal');
+  renderPayments();
+  renderStudents();
+  showToast(`Баланс поповнено на ${lessons} уроків (${amount.toLocaleString('uk-UA')} ₴)`,'success');
+}
+
+// ===== HELPERS =====
+function populateStudentSelects() {
+  const opts = students().map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  ['schedule-student','hw-student'].forEach(id => { if($(id)) $(id).innerHTML = opts; });
+  // Set default date
+  const today = new Date().toISOString().slice(0,10);
+  $('schedule-date') && ($('schedule-date').value = today);
+  const nextWeek = new Date(); nextWeek.setDate(nextWeek.getDate()+7);
+  $('hw-deadline') && ($('hw-deadline').value = nextWeek.toISOString().slice(0,10));
+}
+
+function saveSettings() {
+  currentUser.name = $('settings-name-input').value || currentUser.name;
+  currentUser.email = $('settings-email-input').value || currentUser.email;
+  $('settings-name').textContent = currentUser.name;
+  $('settings-email').textContent = currentUser.email;
+  $('top-name').textContent = currentUser.name;
+  showToast('Налаштування збережено','success');
+}
+
+// ===== TABS =====
+function switchTab(btn, groupClass, panelId) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const panels = parent.nextElementSibling;
+  // Find sibling tab panels
+  let el = parent.nextElementSibling;
+  while(el && el.classList.contains('tab-panel')) {
+    el.classList.remove('active');
+    el = el.nextElementSibling;
+  }
+  $(`tab-${panelId}`) && $(`tab-${panelId}`).classList.add('active');
+}
+
+// ===== WHITEBOARD =====
+let wbCtx = null, wbCanvas = null, wbInited = false;
+function initWhiteboard() {
+  if (wbInited) return;
+  wbInited = true;
+  wbCanvas = $('whiteboard');
+  wbCtx = wbCanvas.getContext('2d');
+  wbCtx.lineCap='round'; wbCtx.lineJoin='round';
+
+  // Resize canvas to container
+  const resize = () => {
+    const wrap = wbCanvas.parentElement;
+    const w = wrap.offsetWidth;
+    wbCanvas.width = w;
+    wbCanvas.height = Math.max(400, window.innerHeight * 0.5);
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  const getPos = (e) => {
+    const rect = wbCanvas.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    return { x: (touch.clientX - rect.left) * (wbCanvas.width/rect.width), y: (touch.clientY - rect.top) * (wbCanvas.height/rect.height) };
+  };
+
+  const start = (e) => {
+    e.preventDefault(); wbDrawing = true;
+    const {x,y} = getPos(e);
+    wbLastX=x; wbLastY=y;
+    if (wbTool==='text') {
+      const text = prompt('Введіть текст:');
+      if (text) {
+        wbCtx.font=`${parseInt(wbSize)*4+12}px 'DM Sans',sans-serif`;
+        wbCtx.fillStyle = wbColor;
+        wbCtx.fillText(text, x, y);
+      }
+      wbDrawing=false; return;
+    }
+    wbCtx.beginPath(); wbCtx.moveTo(x,y);
+  };
+
+  const draw = (e) => {
+    if (!wbDrawing || wbTool==='text') return;
+    e.preventDefault();
+    const {x,y} = getPos(e);
+    wbCtx.lineWidth = wbTool==='erase' ? wbSize*6 : wbSize;
+    wbCtx.strokeStyle = wbTool==='erase' ? '#FFFFFF' : wbColor;
+    wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y);
+    wbLastX=x; wbLastY=y;
+  };
+
+  const end = () => { wbDrawing=false; wbCtx.beginPath(); };
+
+  wbCanvas.addEventListener('mousedown', start);
+  wbCanvas.addEventListener('mousemove', draw);
+  wbCanvas.addEventListener('mouseup', end);
+  wbCanvas.addEventListener('mouseleave', end);
+  wbCanvas.addEventListener('touchstart', start, { passive:false });
+  wbCanvas.addEventListener('touchmove', draw, { passive:false });
+  wbCanvas.addEventListener('touchend', end);
+  $('wb-size').addEventListener('input', function() {
+    wbSize = this.value;
+    $('wb-size-label').textContent = this.value+'px';
+  });
+}
+
+function setWbColor(el) {
+  document.querySelectorAll('.wb-color').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  wbColor = el.dataset.color;
+  if (wbTool==='erase') setWbTool('draw', $('btn-draw'));
+}
+
+function setWbTool(tool, btn) {
+  wbTool = tool;
+  document.querySelectorAll('.wb-tool-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function clearWhiteboard() {
+  if (!wbCtx) return;
+  if (confirm('Очистити дошку?')) wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);
+}
+
+// ===== INIT =====
+function setGreeting() {
+  const h = new Date().getHours();
+  return h<12?'Доброго ранку':'h<18?'Добрий день':'Добрий вечір';
+}
+
+// Bootstrap
+(() => {
+  // Demo: auto-init with admin
+  // Comment out for real auth flow
+})();
+</script>
+</body>
+</html>
